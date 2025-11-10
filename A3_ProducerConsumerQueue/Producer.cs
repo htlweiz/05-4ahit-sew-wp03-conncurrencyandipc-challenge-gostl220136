@@ -27,12 +27,12 @@ public class Producer
     {
         while (!shouldStop)
         {
+            int number = random.Next(1, 101); // Zufällige Zahl zwischen 1 und 100
             lock (lockObj)
             {
-                int number = random.Next(1, 101); // Zufällige Zahl zwischen 1 und 100
                 queue.Enqueue(number);
-                Thread.Sleep(1000); // 1 Sekunde Takt
             }   
+            Thread.Sleep(1000); // 1 Sekunde Takt
         }
     }
 
