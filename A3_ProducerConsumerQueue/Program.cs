@@ -32,9 +32,9 @@ class Program
             if (queue.Count > 50)
             {
                 producer.Stop();
+                Thread.Sleep(1000);
             }
         }
-
 
     }
 }
