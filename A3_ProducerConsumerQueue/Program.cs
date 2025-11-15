@@ -33,19 +33,19 @@ class Program
         }
         foreach (var producer in producers)
         {
-            Console.WriteLine($"{queue.Count}");
             producer.Stop();
         }
 
+        Console.WriteLine($"\n Queue-Füllstand: {queue.Count}");
     
         Consumer consumer1 = new Consumer(queue);
 
         while (queue.Count > 0)
         {
             Thread.Sleep(250);
-            Console.Write(".");
+            Console.Write("."); //Optional
         }
-        Console.WriteLine($"Alle Zahlen konsumiert. Endsumme: {consumer1.GetSum()}");
+        Console.WriteLine($"\nAlle Zahlen konsumiert. Endsumme: {consumer1.GetSum()}");
         consumer1.Stop();
     }
 }
