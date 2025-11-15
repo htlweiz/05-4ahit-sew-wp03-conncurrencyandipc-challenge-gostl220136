@@ -14,38 +14,40 @@ class Program
 
         Console.WriteLine("Übung 3: Producer-Consumer");
         Console.WriteLine("==========================================\n");
+        Console.WriteLine("Starte Producer und Consumer...\n");
 
-        // TODO
         List<Producer> producers = new List<Producer>();
         for (int i = 0; i < 5; i++)
         {
             producers.Add(new Producer(i + 1, queue));
         }
 
-        Console.WriteLine("Producer und Consumer gestartet...\n");
+        Consumer consumer1 = new Consumer(queue);
+
+       
 
         // Überwachung: Jede Sekunde Queue-Füllstand ausgeben und auf >50 prüfen
-
-        // TODO
         while (queue.Count < 50)
         {
+            Console.WriteLine($"\n{new string('~',27)}\n    Queue-Füllstand: {queue.Count}\n{new string('~',27)}\n");
             Thread.Sleep(1000);
         }
         foreach (var producer in producers)
         {
             producer.Stop();
         }
+        Console.WriteLine($"\n{new string('#',25)}\n End Queue-Füllstand: {queue.Count}\n{new string('#',25)}\n");
 
-        Console.WriteLine($"\n Queue-Füllstand: {queue.Count}");
-    
-        Consumer consumer1 = new Consumer(queue);
-
-        while (queue.Count > 0)
+        // Warten bis alle Zahlen konsumiert sind
+        bool done = false;
+        while (!done)
         {
-            Thread.Sleep(250);
-            Console.Write("."); //Optional
+            if (queue.Count == 0)
+            {
+                Console.WriteLine($"\nAlle Zahlen konsumiert. Endsumme: {consumer1.GetSum()}");
+                consumer1.Stop();            
+                done = true;
+            }
         }
-        Console.WriteLine($"\nAlle Zahlen konsumiert. Endsumme: {consumer1.GetSum()}");
-        consumer1.Stop();
     }
 }

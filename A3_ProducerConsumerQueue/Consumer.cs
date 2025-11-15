@@ -30,7 +30,8 @@ public class Consumer
                 if (queue.TryDequeue(out int number))
                 {
                     sum += number;
-                }
+                    //Console.WriteLine($"Consumer consumed: {number}");
+                }   
             }
             Thread.Sleep(250); // 250ms Takt
         }
