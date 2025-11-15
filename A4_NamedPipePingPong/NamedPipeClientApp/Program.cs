@@ -27,9 +27,38 @@ class NamedPipeClient
 
     public void StartClient()
     {
-        Console.WriteLine("Client started. Connecting to server...");
-        Console.WriteLine($"Pipe Name: {PipeName}\n");
+        using (NamedPipeClientStream pipeClient = new NamedPipeClientStream(".", PipeName, PipeDirection.InOut))
+        {
+            Console.WriteLine("Client started. Connecting to server...");
+            Console.WriteLine($"Pipe Name: {PipeName}\n");
+            pipeClient.Connect();
+            Console.WriteLine("Connected to server.");
 
-       
+            try
+            {
+                using (StreamReader reader = new StreamReader(pipeClient))
+                {
+                    using (StreamWriter writer = new StreamWriter(pipeClient))
+                    {
+                        writer.AutoFlush = true;
+                        string? message;
+                        int round = 0;
+                        while ((message = reader.ReadLine()) != null)
+                        {
+                            Console.WriteLine($"Recieved: \"{message}\"");
+                            Thread.Sleep(250);
+                            string clientMessage = $"Pong {round}";
+                            writer.WriteLine(clientMessage);
+                            Console.WriteLine($"Sent: \"{clientMessage}\"");
+                            round++;
+                        }
+                    }
+                }  
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("ERROR: {0} Server closed connection?", e.Message); 
+            }
+        }
     }
 }

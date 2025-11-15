@@ -27,9 +27,46 @@ class NamedPipeServer
     
     public void StartServer()
     {
-        Console.WriteLine("Server started. Waiting for client...");
-        Console.WriteLine($"Pipe Name: {PipeName}\n");
+        using (NamedPipeServerStream pipeServer = new NamedPipeServerStream(PipeName))
+        {
+            Console.WriteLine("Server started. Waiting for client...");
+            Console.WriteLine($"Pipe Name: {PipeName}\n");
 
-       
+            pipeServer.WaitForConnection();
+            Console.WriteLine("Client connected.");
+
+            using (StreamReader reader = new StreamReader(pipeServer))
+            {
+                using (StreamWriter writer = new StreamWriter(pipeServer))
+                {
+                    int round = 0;
+                    writer.AutoFlush = true;
+                    string serverMessage = $"Ping {round}";
+                    writer.WriteLine(serverMessage);
+                    Console.WriteLine($"<Server> {serverMessage}");
+                    round++;
+
+                    string message;
+                    do 
+                    {
+                        if ((message = reader.ReadLine()) != null)
+                        {
+                            Console.WriteLine($"<Client> {message}");
+                            Thread.Sleep(1000);
+                            serverMessage = $"Ping {round}";
+                            writer.WriteLine(serverMessage);
+                            Console.WriteLine($"<Server> {serverMessage}");
+                            round++;
+                        }
+                    } while (round <= 10);
+
+                    // Read final message from client
+                    if ((message = reader.ReadLine()) != null)
+                    {
+                        Console.WriteLine($"<Client> {message}");
+                    }
+                }                    
+            }
+        }       
     }
 }
